@@ -1,0 +1,29 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Env files
+.env
+.env.*
+*.env
+
+# Python/Django
+backend/.venv/
+backend/venv/
+backend/db.sqlite3
+backend/*.sqlite3
+backend/staticfiles/
+backend/media/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node (both SPAs)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+seller-portal/node_modules/
+seller-portal/dist/
+seller-portal/.env
