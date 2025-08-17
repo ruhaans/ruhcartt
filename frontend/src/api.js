@@ -1,16 +1,15 @@
-// frontend/src/api.js
 import axios from "axios";
 
-export const api = axios.create({
-  baseURL: "http://localhost:8000/api",
-});
+// Use the backend you set in Netlify env var; fall back to localhost in dev
+const BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (location.hostname === "localhost" ? "http://localhost:8000/api" : ""); // empty = same-origin (not used if env var set)
+
+export const api = axios.create({ baseURL: BASE });
 
 export function setToken(token) {
-  if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common["Authorization"];
-  }
+  if (token) api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  else delete api.defaults.headers.common["Authorization"];
 }
 
 export function logout() {
@@ -20,26 +19,21 @@ export function logout() {
   window.location.href = "/login";
 }
 
-// Load any saved token on app start
+// Load saved token on app start
 const saved = localStorage.getItem("token");
 if (saved) setToken(saved);
 
 // --- AUTO REFRESH ON 401 ---
 let isRefreshing = false;
-// queue of resolver functions; each awaiting request will resolve with the new token
 let pendingQueue = [];
 
 api.interceptors.response.use(
   (resp) => resp,
   async (error) => {
     const original = error?.config || {};
-
-    // if not unauthorized, or we've already retried, just fail
     if (error?.response?.status !== 401 || original._retry) {
       return Promise.reject(error);
     }
-
-    // mark so we don't loop forever
     original._retry = true;
 
     const refresh = localStorage.getItem("refresh");
@@ -49,7 +43,6 @@ api.interceptors.response.use(
     }
 
     try {
-      // if a refresh is already happening, queue this request until it finishes
       if (isRefreshing) {
         const newToken = await new Promise((resolve) => pendingQueue.push(resolve));
         original.headers = original.headers || {};
@@ -66,12 +59,10 @@ api.interceptors.response.use(
       localStorage.setItem("token", newAccess);
       setToken(newAccess);
 
-      // flush queued requests
       pendingQueue.forEach((fn) => fn(newAccess));
       pendingQueue = [];
       isRefreshing = false;
 
-      // retry the original request with the new token
       original.headers = original.headers || {};
       original.headers["Authorization"] = `Bearer ${newAccess}`;
       return api(original);
@@ -84,5 +75,4 @@ api.interceptors.response.use(
   }
 );
 
-// optional default export if you ever want `import api from "./api"`
 export default api;
