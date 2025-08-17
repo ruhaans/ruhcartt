@@ -1,0 +1,62 @@
+# Default: normalize all text to LF in the repo
+* text=auto eol=lf
+
+# --- Source code (text) ---
+*.py      text
+*.js      text
+*.jsx     text
+*.ts      text
+*.tsx     text
+*.json    text
+*.yml     text
+*.yaml    text
+*.css     text
+*.scss    text
+*.md      text
+*.html    text
+*.ini     text
+*.env     text
+*.toml    text
+*.txt     text
+*.csv     text
+*.tsx     text
+*.sql     text
+
+# --- Windows scripts (want CRLF when checked out on Windows) ---
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+
+# --- Unix scripts (force LF) ---
+*.sh      text eol=lf
+
+# --- Binaries / assets ---
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.webp    binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.7z      binary
+*.gz      binary
+*.tar     binary
+*.mp4     binary
+*.mov     binary
+*.avi     binary
+*.mp3     binary
+*.wav     binary
+*.ogg     binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
+*.eot     binary
+*.otf     binary
+*.sqlite3 binary
+*.db      binary
+*.pkl     binary
+*.h5      binary
+*.bin     binary
+
+# --- Notebooks & images treated as binary to avoid merge damage ---
+*.ipynb   binary
